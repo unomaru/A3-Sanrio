@@ -1,0 +1,46 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 24px;
+    background: #fffafc;
+    color: #333;
+}
+
+h1 {
+    margin-bottom: 8px;
+}
+
+#controls {
+    margin-top: 24px;
+    text-align: center;
+}
+
+#yearSlider {
+    width: 80%;
+}
+
+.bar {
+    fill: hotpink;
+}
+
+.axis text {
+    font-size: 12px;
+}
+
+.char-label {
+    pointer-events: none;
+}
+
+#tooltip {
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 13px;
+    pointer-events: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+}
+
+.hidden {
+    display: none;
+}

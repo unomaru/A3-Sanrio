@@ -1,10 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sanrio Character Popularity Over Time</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
+<header>
+    <h1>Sanrio Character Popularity Over Time</h1>
+    <p>Explore how Sanrio character rankings changed from 2000 to 2024</p>
+</header>
 
+<section id="chart-container">
+    <svg id="chart" width="1400" height="600"></svg>
+</section>
+
+<section id="controls">
+    <button id="playPauseBtn">Play</button>
+    <label for="yearSlider">Year:</label>
+    <input type="range" id="yearSlider" min="1986" max="2024" step="1" value="1986" />
+    <span id="yearLabel">1986</span>
+</section>
+
+<div id="tooltip" class="hidden"></div>
+
+<footer>
+    <p>Source: Kaggle Sanrio Character Rankings Top 10 (1986–2024)</p>
+</footer>
+
+<script src="js/script.js"></script>
 </body>
 </html>
