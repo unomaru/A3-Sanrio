@@ -20,7 +20,7 @@
 <section id="controls">
     <button id="playPauseBtn">Play</button>
     <label for="yearSlider">Year:</label>
-    <input type="range" id="yearSlider" min="1986" max="2024" step="1" value="1986" />
+    <input type="range" id="yearSlider" min="2000" max="2024" step="1" value="2000" />
     <span id="yearLabel">1986</span>
 </section>
 
@@ -29,6 +29,12 @@
     <p>Top 10 characters move onto fixed podiums for the selected year.</p>
 
     <svg id="podiumStageChart" width="1500" height="850"></svg>
+
+    <section id="podium-controls">
+        <label for="stageYearSlider">Year:</label>
+        <input type="range" id="stageYearSlider" min="2000" max="2024" step="1" value="2000" />
+        <span id="stageYearLabel">2000</span>
+    </section>
 </section>
 
 <div id="tooltip" class="hidden"></div>
