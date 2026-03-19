@@ -30,6 +30,16 @@ h1 {
     pointer-events: none;
 }
 
+#podiumStageChart {
+    background: #fffafc;
+    border: 1px solid #eee;
+    border-radius: 12px;
+}
+
+.character-node text {
+    pointer-events: none;
+}
+
 #tooltip {
     position: absolute;
     background: white;
