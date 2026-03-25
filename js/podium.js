@@ -2,7 +2,7 @@
     const stageWidth = +stageSvg.attr("width");
     const stageHeight = +stageSvg.attr("height");
 
-    const stageMargin = { top: 80, right: 40, bottom: 180, left: 40 };
+    const stageMargin = { top: 40, right: 40, bottom: 100, left: 40 };
     const stageInnerWidth = stageWidth - stageMargin.left - stageMargin.right;
     const stageInnerHeight = stageHeight - stageMargin.top - stageMargin.bottom;
 
@@ -10,43 +10,49 @@
         .attr("transform", `translate(${stageMargin.left},${stageMargin.top})`);
 
     const podiumAreaHeight = 360;
-    const waitingAreaTop = podiumAreaHeight + 140;
+    const waitingAreaTop = podiumAreaHeight + 70;
 
     const imageSize = 64;
     const highlightedImageSize = 76;
 
-    // Reuse the main slider + label
+    // yearSlider
     const stageYearSlider = d3.select("#stageYearSlider");
     const stageYearLabel = d3.select("#stageYearLabel");
+
+    // Play animation
+    const stagePlayPauseBtn = d3.select("#stagePlayPauseBtn");
+
+    let stageIsPlaying = false;
+    let stagePlayInterval = null;
 
     // Map character names to local image files
     const imageMap = {
         "Hello Kitty": "images/kitty.webp",
-        "Little Twin Stars": "images/LittleTwinStars.jpeg",
+        "Little Twin Stars": "images/little twin stars.gif",
         "My Melody": "images/MyMelody.webp",
-        "Pompompurin": "images/Pompompurin.jpeg",
+        "Pompompurin": "images/pompom.png",
         "Cinnamoroll": "images/Cinnamoroll.webp",
         "Kuromi": "images/Kuromi.webp",
         "Pochacco": "images/Pochacco.webp",
         "Bad Badtz-Maru": "images/Bad Badtz.webp",
         "Dear Daniel": "images/Dear Daniel.webp",
         "Tuxedosam": "images/Tuxedosam.webp",
-        "Charmmykitty": "images/Charmmykitty.webp",
+        "Charmmykitty": "images/charmmy.webp",
         "Patty & Jimmy": "images/Patty&Jimmy.webp",
-        "Gudetama": "images/Gudetama.jpg",
+        "Gudetama": "images/gudetama.png",
         "Sugarbunnies": "images/Sugarbunnies.webp",
-        "Yoshikitty": "images/Yoshikitty.jpg",
-        "SHOW BY ROCK!!": "images/Show by rock.jpeg",
+        "Yoshikitty": "images/yoshi.png",
+        "SHOW BY ROCK!!": "images/show.png",
         "U*Sa*Ha*Na": "images/Usahana.png",
         "Corocorokuririn": "images/Corocorokuririn.webp",
         "GOEXPANDA": "images/GOEXPANDA.webp",
-        "Hangyodon": "images/Hangyodon.png",
-        "Jewelpet": "images/Jewelpet.webp",
-        "KIRIMI-chan": "images/Kirimi.jpeg",
+        "Hangyodon": "images/hangyodon.webp",
+        "Jewelpet": "images/jewel.png",
+        "KIRIMI-chan": "images/kirimi.png",
         "Kerokerokeroppi": "images/Keroppi.webp",
         "Cogimyun": "images/Cogimyun.png",
         "Fuku-chan": "images/Fuku.webp",
-        "ShinganCrimsonZ": "images/Shingan.webp",
+        "ShinganCrimsonZ": "images/shingan.webp",
         "Bonbonribbon": "images/Bonbon.webp",
         "Chibimaru": "images/Chibimaru.webp",
         "Chocopanda": "images/Choco.webp",
@@ -54,11 +60,11 @@
         "Marshmallowmitainafuwafuwanyanko": "images/Marsh.webp",
         "Minna no Tābō": "images/Minna no Tabo.webp",
         "Mocha": "images/Mocha.webp",
-        "Muffin": "images/Muffin.webp",
+        "Muffin": "images/muffin.webp",
         "Okigaru Friends": "images/Okigaru.webp",
-        "Plasmagica": "images/Plasmagica.webp",
+        "Plasmagica": "images/plasmagica.webp",
         "Sweetcoron": "images/Sweetcorn.webp",
-        "Taraiguma no Landry": "images/Taraiguma.webp",
+        "Taraiguma no Landry": "images/tarai.webp",
         "Trichronika": "images/Trichronika.webp",
         "Tsurezure Naru Ayatsuri Mugenan": "images/Tsurezure.webp",
         "Turfy": "images/Turfy.webp",
@@ -144,9 +150,9 @@
             .text(rank => rank);
 
         // ---------- WAITING AREA ----------
-        const cols = Math.min(8, allCharacters.length);
+        const cols = Math.min(14, allCharacters.length);
         const cellWidth = stageInnerWidth / cols;
-        const rowHeight = 120;
+        const rowHeight = 90;
 
         function waitingPosition(character) {
             const index = allCharacters.indexOf(character);
@@ -169,7 +175,7 @@
         // waiting area label
         stageG.append("text")
             .attr("x", 0)
-            .attr("y", waitingAreaTop - 35)
+            .attr("y", waitingAreaTop - 40)
             .attr("font-size", 16)
             .attr("font-weight", "600")
             .attr("fill", "#7a5b6a")
@@ -195,7 +201,8 @@
             .attr("font-size", 11)
             .attr("font-weight", "600")
             .attr("fill", "#333")
-            .text(d => d);
+            .attr("opacity", 0)
+            .text("");
 
         charGroups.append("image")
             .attr("class", "char-image")
@@ -216,7 +223,7 @@
             .text("");
 
         function updatePodiumStage(year) {
-            yearLabel.text(year);
+            stageYearLabel.text(year);
 
             const yearRows = (dataByYear.get(year) || [])
                 .slice()
@@ -244,7 +251,8 @@
 
             charGroups.select(".char-name")
                 .transition(t)
-                .attr("opacity", d => rankByCharacter.get(d) != null ? 1 : 0.9);
+                .attr("opacity", d => rankByCharacter.get(d) != null ? 1 : 0)
+                .text(d => rankByCharacter.get(d) != null ? d : "");
 
             charGroups.select(".char-image")
                 .transition(t)
@@ -259,10 +267,45 @@
             .attr("min", d3.min(years))
             .attr("max", d3.max(years))
             .attr("step", 1)
-            .property("value", d3.min(years))
-            .on("input", function () {
-                updatePodiumStage(+this.value);
-            });
+            .property("value", d3.min(years));
+
+        stageYearSlider.on("input", function () {
+            if (stageIsPlaying) {
+                stageIsPlaying = false;
+                stagePlayPauseBtn.text("Play");
+                clearInterval(stagePlayInterval);
+                stagePlayInterval = null;
+            }
+
+            updatePodiumStage(+this.value);
+        });
+
+        stagePlayPauseBtn.on("click", function () {
+            console.log("play clicked");
+
+            if (stageIsPlaying) {
+                stageIsPlaying = false;
+                stagePlayPauseBtn.text("Play");
+                clearInterval(stagePlayInterval);
+                stagePlayInterval = null;
+                return;
+            }
+
+            stageIsPlaying = true;
+            stagePlayPauseBtn.text("Pause");
+
+            stagePlayInterval = setInterval(() => {
+                const currentYear = +stageYearSlider.property("value");
+                let nextYear = currentYear + 1;
+
+                if (nextYear > d3.max(years)) {
+                    nextYear = d3.min(years);
+                }
+
+                stageYearSlider.property("value", nextYear);
+                updatePodiumStage(nextYear);
+            }, 1200);
+        });
 
         updatePodiumStage(d3.min(years));
     });

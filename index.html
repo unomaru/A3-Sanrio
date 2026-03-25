@@ -8,42 +8,71 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
-<header>
-    <h1>Sanrio Character Popularity Over Time</h1>
-    <p>Explore how Sanrio character rankings changed from 2000 to 2024</p>
-</header>
-
-<section id="chart-container">
-    <svg id="chart" width="1400" height="600"></svg>
-</section>
-
-<section id="controls">
-    <button id="playPauseBtn">Play</button>
-    <label for="yearSlider">Year:</label>
-    <input type="range" id="yearSlider" min="2000" max="2024" step="1" value="2000" />
-    <span id="yearLabel">1986</span>
-</section>
-
-<section id="podium-stage-section">
-    <h2>Sanrio Podium Stage</h2>
-    <p>Top 10 characters move onto fixed podiums for the selected year.</p>
-
-    <svg id="podiumStageChart" width="1500" height="850"></svg>
-
-    <section id="podium-controls">
-        <label for="stageYearSlider">Year:</label>
-        <input type="range" id="stageYearSlider" min="2000" max="2024" step="1" value="2000" />
-        <span id="stageYearLabel">2000</span>
+    <section id="landing">
+        <h1>🎀 Sanrio Character Ranking 🎀</h1>
+        <p>Explore how your favorite characters' ranks changes over time!</p>
     </section>
-</section>
 
-<div id="tooltip" class="hidden"></div>
+     <!--
+     <section id="section1">
+            <h1>Sanrio Character Popularity Over Time</h1>
+            <p>Explore how Sanrio character rankings changed from 2000 to 2024</p>
 
-<footer>
-    <p>Source: Kaggle Sanrio Character Rankings Top 10 (1986–2024)</p>
-</footer>
+        <section id="chart-container">
+            <svg id="chart" width="1400" height="600"></svg>
+        </section>
 
-<script src="js/script.js"></script>
-<script src="js/podium.js"></script>
+        <section id="controls">
+            <label for="yearSlider">Year:</label>
+            <input type="range" id="yearSlider" min="2000" max="2024" step="1" value="2000" />
+            <span id="yearLabel">2000</span>
+
+            <div class="year-scale">
+                <span>2000</span>
+                <span>2005</span>
+                <span>2010</span>
+                <span>2015</span>
+                <span>2020</span>
+                <span>2024</span>
+            </div>
+        </section>
+    </section>
+    -->
+
+    <section id="section2">
+        <h2>Explore Ranking Change from 2000 to 2024</h2>
+        <svg id="podiumStageChart" width="1500" height="700"></svg>
+
+        <section id="podium-controls">
+            <button id="stagePlayPauseBtn">Play</button>
+            <label for="stageYearSlider">Year</label>
+            <input type="range" id="stageYearSlider" min="2000" max="2024" step="1" value="2000" />
+            <span id="stageYearLabel">2000</span>
+
+            <div class="stage-year-scale">
+                <span>2000</span>
+                <span>2005</span>
+                <span>2010</span>
+                <span>2015</span>
+                <span>2020</span>
+                <span>2024</span>
+            </div>
+        </section>
+    </section>
+    <section id="section3">
+        <h1>Sanrio Character Directory</h1>
+        <p>Hover over a character to view their ranking history from 2000 to 2024</p>
+
+        <section id="character-grid"></section>
+    </section>
+
+    <div id="tooltip" class="hidden"></div>
+
+    <footer>
+        <p>Source: Kaggle Sanrio Character Rankings Top 10 (1986–2024)</p>
+    </footer>
+
+    <script src="js/podium.js"></script>
+    <script src="js/characters-section.js"></script>
 </body>
 </html>
