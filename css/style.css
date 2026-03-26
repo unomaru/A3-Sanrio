@@ -14,7 +14,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     background: #fff1f5;
-    color: #333;
+    color: #7a5b6a;
 }
 
 #landing,
@@ -41,7 +41,7 @@ body {
 
 #landing p {
     font-size: 18px;
-    color: #666;
+    color: #7a5b6a;
     margin-bottom: 24px;
 }
 
@@ -51,7 +51,7 @@ h1 {
 }
 
 h2 {
-    margin-top: 10px;
+    margin-top: 15px;
     margin-bottom: 0px;
 }
 
@@ -71,19 +71,21 @@ h2 {
 }
 
 #podium-controls {
+    margin-top: auto;
+    padding-bottom: 20px;
     text-align: center;
     width: 100%;
 }
 
 #stageYearSlider {
-    width: 60vw;
-    max-width: 650px;
+    width: 50vw;
+    max-width: 600px;
     min-width: 260px;
 }
 
 .stage-year-scale {
-    width: 60vw;
-    max-width: 650px;
+    width: 50vw;
+    max-width: 600px;
     min-width: 260px;
     margin: 6px auto 0;
     display: flex;
@@ -113,8 +115,31 @@ h2 {
     background: #ee9fc4;
 }
 
+#waiting-toggle-wrap {
+    text-align: center;
+    margin-top: 12px;
+    margin-bottom: 12px;
+    width: 100%;
+}
+
+#toggleWaitingBtn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 999px;
+    background: #f5b6d2;
+    color: #5d2743;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#toggleWaitingBtn:hover {
+    background: #ee9fc4;
+}
+
 #podiumStageChart {
     background: #fff1f5;
+    display: block;
+    width: 100%;
 }
 
 .character-node text {
@@ -136,14 +161,15 @@ h2 {
     min-height: 100vh;
     padding: 24px;
     box-sizing: border-box;
-    background: #fffafc;
-    color: #333;
+    background: #fff1f5;
+    color: #7a5b6a;
+    align-items: center;
 }
 
 #character-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 20px;
+    gap: 17px;
     margin-top: 24px;
 }
 
@@ -151,7 +177,7 @@ h2 {
     background: white;
     border: 1px solid #f0dbe5;
     border-radius: 14px;
-    padding: 12px;
+    padding: 7px;
     text-align: center;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     cursor: pointer;

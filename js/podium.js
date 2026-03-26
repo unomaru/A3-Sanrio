@@ -2,15 +2,32 @@
     const stageWidth = +stageSvg.attr("width");
     const stageHeight = +stageSvg.attr("height");
 
+    const expandedSvgHeight = 850;
+    const collapsedSvgHeight = 800;
+
+    stageSvg.attr("height", collapsedSvgHeight);
+
     const stageMargin = { top: 40, right: 40, bottom: 100, left: 40 };
     const stageInnerWidth = stageWidth - stageMargin.left - stageMargin.right;
     const stageInnerHeight = stageHeight - stageMargin.top - stageMargin.bottom;
 
+    function getCurrentSvgHeight() {
+        return +stageSvg.attr("height");
+    }
+
     const stageG = stageSvg.append("g")
         .attr("transform", `translate(${stageMargin.left},${stageMargin.top})`);
 
-    const podiumAreaHeight = 360;
-    const waitingAreaTop = podiumAreaHeight + 70;
+    const expandedPodiumAreaHeight = 360;
+    const collapsedPodiumAreaHeight = 520;
+
+    function getCurrentPodiumAreaHeight() {
+        return waitingVisible ? expandedPodiumAreaHeight : collapsedPodiumAreaHeight;
+    }
+
+    function getCurrentWaitingAreaTop() {
+        return getCurrentPodiumAreaHeight() + 70;
+    }
 
     const imageSize = 64;
     const highlightedImageSize = 76;
@@ -24,6 +41,11 @@
 
     let stageIsPlaying = false;
     let stagePlayInterval = null;
+
+    // Toggle Button
+    const toggleWaitingBtn = d3.select("#toggleWaitingBtn");
+    let waitingVisible = false;
+    toggleWaitingBtn.text("Show Waiting Area ▼");
 
     // Map character names to local image files
     const imageMap = {
@@ -104,7 +126,7 @@
         }
 
         function podiumY(rank) {
-            return podiumAreaHeight - podiumHeight(rank);
+            return getCurrentPodiumAreaHeight() - podiumHeight(rank);
         }
 
         function podiumColor(rank) {
@@ -115,11 +137,11 @@
         }
 
         // baseline
-        stageG.append("line")
+        const baseline = stageG.append("line")
             .attr("x1", 0)
             .attr("x2", stageInnerWidth)
-            .attr("y1", podiumAreaHeight)
-            .attr("y2", podiumAreaHeight)
+            .attr("y1", getCurrentPodiumAreaHeight())
+            .attr("y2", getCurrentPodiumAreaHeight())
             .attr("stroke", "#d9c8d2")
             .attr("stroke-width", 2);
 
@@ -151,8 +173,9 @@
 
         // ---------- WAITING AREA ----------
         const cols = Math.min(14, allCharacters.length);
+        const rowHeight = 65;
         const cellWidth = stageInnerWidth / cols;
-        const rowHeight = 90;
+        //const waitingAreaTop = podiumAreaHeight + 80;
 
         function waitingPosition(character) {
             const index = allCharacters.indexOf(character);
@@ -161,7 +184,17 @@
 
             return {
                 x: col * cellWidth + cellWidth / 2,
-                y: waitingAreaTop + row * rowHeight
+                y: getCurrentWaitingAreaTop() + row * rowHeight
+            };
+        }
+
+        function hiddenWaitingPosition(character) {
+            const index = allCharacters.indexOf(character);
+            const col = index % cols;
+
+            return {
+                x: col * cellWidth + cellWidth / 2,
+                y: getCurrentSvgHeight() + 120
             };
         }
 
@@ -173,12 +206,13 @@
         }
 
         // waiting area label
-        stageG.append("text")
+        const waitingLabel = stageG.append("text")
             .attr("x", 0)
-            .attr("y", waitingAreaTop - 40)
+            .attr("y", getCurrentWaitingAreaTop() - 40)
             .attr("font-size", 16)
             .attr("font-weight", "600")
             .attr("fill", "#7a5b6a")
+            .attr("opacity", 0)
             .text("Waiting area");
 
         // CHARACTER NODES //
@@ -238,12 +272,27 @@
             charGroups.transition(t)
                 .attr("transform", d => {
                     const rank = rankByCharacter.get(d);
-                    const pos = rank != null ? podiumPosition(rank) : waitingPosition(d);
+
+                    if (rank != null) {
+                        const pos = podiumPosition(rank);
+                        return `translate(${pos.x}, ${pos.y})`;
+                    }
+
+                    if (waitingVisible) {
+                        const pos = waitingPosition(d);
+                        return `translate(${pos.x}, ${pos.y})`;
+                    }
+
+                    const pos = hiddenWaitingPosition(d);
                     return `translate(${pos.x}, ${pos.y})`;
                 });
 
             charGroups.select(".char-rank")
                 .transition(t)
+                .attr("opacity", d => {
+                    const rank = rankByCharacter.get(d);
+                    return rank != null ? 1 : 0;
+                })
                 .text(d => {
                     const rank = rankByCharacter.get(d);
                     return rank != null ? `#${rank}` : "";
@@ -251,16 +300,55 @@
 
             charGroups.select(".char-name")
                 .transition(t)
-                .attr("opacity", d => rankByCharacter.get(d) != null ? 1 : 0)
-                .text(d => rankByCharacter.get(d) != null ? d : "");
+                .attr("opacity", d => {
+                    const rank = rankByCharacter.get(d);
+                    return rank != null ? 1 : 0;
+                })
+                .text(d => {
+                    const rank = rankByCharacter.get(d);
+                    return rank != null ? d : "";
+                });
 
             charGroups.select(".char-image")
                 .transition(t)
-                .attr("opacity", d => rankByCharacter.get(d) != null ? 1 : 0.8)
+                .attr("opacity", d => {
+                    const rank = rankByCharacter.get(d);
+                    if (rank != null) return 1;
+                    return waitingVisible ? 0.8 : 0;
+                })
                 .attr("width", d => rankByCharacter.get(d) != null ? highlightedImageSize : imageSize)
                 .attr("height", d => rankByCharacter.get(d) != null ? highlightedImageSize : imageSize)
                 .attr("x", d => rankByCharacter.get(d) != null ? -highlightedImageSize / 2 : -imageSize / 2)
                 .attr("y", d => rankByCharacter.get(d) != null ? -highlightedImageSize / 2 : -imageSize / 2);
+        }
+
+        function updateWaitingAreaLayout() {
+            const newHeight = waitingVisible ? expandedSvgHeight : collapsedSvgHeight;
+
+            stageSvg
+                .transition()
+                .duration(500)
+                .attr("height", newHeight);
+
+            baseline
+                .transition()
+                .duration(500)
+                .attr("y1", getCurrentPodiumAreaHeight())
+                .attr("y2", getCurrentPodiumAreaHeight());
+
+            podiumGroups
+                .transition()
+                .duration(500)
+                .attr("transform", rank => `translate(${podiumX(rank)}, ${podiumY(rank)})`);
+
+            waitingLabel
+                .transition()
+                .duration(500)
+                .attr("y", getCurrentWaitingAreaTop() - 40)
+                .attr("opacity", waitingVisible ? 1 : 0);
+
+            const currentYear = +stageYearSlider.property("value");
+            updatePodiumStage(currentYear);
         }
 
         stageYearSlider
@@ -307,6 +395,21 @@
             }, 1200);
         });
 
+        toggleWaitingBtn.on("click", function () {
+            waitingVisible = !waitingVisible;
+
+            toggleWaitingBtn.text(
+                waitingVisible ? "Hide Waiting Area ▲" : "Show Waiting Area ▼"
+            );
+
+            updateWaitingAreaLayout();
+
+            const currentYear = +stageYearSlider.property("value");
+            updatePodiumStage(currentYear);
+        });
+
+        toggleWaitingBtn.text("Show Waiting Area ▼");
+        updateWaitingAreaLayout();
         updatePodiumStage(d3.min(years));
     });
 })();
