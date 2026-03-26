@@ -14,7 +14,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     background: #fff1f5;
-    color: #7a5b6a;
+    color: #444;
 }
 
 #landing,
@@ -48,11 +48,15 @@ body {
 h1 {
     margin-top: 30px;
     margin-bottom: 0px;
+
+    color: #7a5b6a;
 }
 
 h2 {
     margin-top: 15px;
     margin-bottom: 0px;
+
+    color: #7a5b6a;
 }
 
 #section1, #section2 {
@@ -73,25 +77,50 @@ h2 {
 #podium-controls {
     margin-top: auto;
     padding-bottom: 20px;
-    text-align: center;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 16px;
     width: 100%;
 }
 
+.slider-block {
+    width: 700px;
+    max-width: 70vw;
+    display: flex;
+    flex-direction: column;
+}
+
+.slider-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 60px;
+    align-items: center;
+    column-gap: 10px;
+    width: 100%;
+}
+
+.slider-row label {
+    margin: 0;
+    text-align: right;
+}
+
 #stageYearSlider {
-    width: 50vw;
-    max-width: 600px;
-    min-width: 260px;
+    width: 100%;
+    margin: 0;
+}
+
+#stageYearLabel {
+    text-align: left;
 }
 
 .stage-year-scale {
-    width: 50vw;
-    max-width: 600px;
-    min-width: 260px;
-    margin: 6px auto 0;
+    width: calc(100% - 100px);
+    margin-left: 52px;
     display: flex;
     justify-content: space-between;
     font-size: 12px;
     color: #777;
+    margin-top: 6px;
 }
 
 .stage-year-scale span {
@@ -163,7 +192,13 @@ h2 {
     box-sizing: border-box;
     background: #fff1f5;
     color: #7a5b6a;
+}
+
+#section3 h2,p {
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    text-align: center;
 }
 
 #character-grid {
@@ -182,6 +217,11 @@ h2 {
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+
+    line-height: 1.2;
 }
 
 .character-card:hover {
@@ -201,6 +241,63 @@ h2 {
     font-size: 13px;
     font-weight: 600;
     color: #444;
+}
+
+#character-detail-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+#character-detail-modal.hidden {
+    display: none;
+}
+
+#character-detail-content {
+    position: relative;
+    width: min(950px, 90vw);
+    background: white;
+    border: 1px solid #f0dbe5;
+    border-radius: 16px;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+}
+
+#detail-title {
+    margin-top: 0;
+    margin-bottom: 12px;
+    text-align: center;
+    color: #7a5b6a;
+}
+
+#detail-chart {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    background: white;
+}
+
+#detail-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    border: none;
+    background: #f5b6d2;
+    color: #5d2743;
+    border-radius: 999px;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#detail-close-btn:hover {
+    background: #ee9fc4;
 }
 
 .hidden {
